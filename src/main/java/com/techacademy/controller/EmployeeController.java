@@ -49,18 +49,13 @@ public class EmployeeController {
         return "employees/detail";
     }
 
-    // 従業員更新画面
+    // 従業員新規登録画面
     @GetMapping(value = "/add")
     public String create(@ModelAttribute Employee employee) {
 
         return "employees/new";
     }
-    // 従業員新規登録画面
-    @GetMapping(value = "/update")
-    public String update(@ModelAttribute Employee employee) {
 
-        return "employees/update";
-    }
     // 従業員新規登録処理
     @PostMapping(value = "/add")
     public String add(@Validated Employee employee, BindingResult res, Model model) {
@@ -102,7 +97,53 @@ public class EmployeeController {
 
         return "redirect:/employees";
     }
+    // 従業員更新画面
+    @GetMapping(value = "/update")
+    public String update(@ModelAttribute Employee employee) {
 
+        return "employees/update";
+    }
+    // 従業員更新処理
+    @PostMapping(value = "/update")
+    public String update(@Validated Employee employee, BindingResult res, Model model) {
+
+        // パスワード空白チェック
+        /*
+         * エンティティ側の入力チェックでも実装は行えるが、更新の方でパスワードが空白でもチェックエラーを出さずに
+         * 更新出来る仕様となっているため上記を考慮した場合に別でエラーメッセージを出す方法が簡単だと判断
+         */
+        if ("".equals(employee.getPassword())) {
+            // パスワードが空白だった場合
+            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.BLANK_ERROR),
+                    ErrorMessage.getErrorValue(ErrorKinds.BLANK_ERROR));
+
+            return update(employee);
+
+        }
+
+        // 入力チェック
+        if (res.hasErrors()) {
+            return update(employee);
+        }
+
+        // 論理削除を行った従業員番号を指定すると例外となるためtry~catchで対応
+        // (findByIdでは削除フラグがTRUEのデータが取得出来ないため)
+        try {
+            ErrorKinds result = employeeService.save(employee);
+
+            if (ErrorMessage.contains(result)) {
+                model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+                return update(employee);
+            }
+
+        } catch (DataIntegrityViolationException e) {
+            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DUPLICATE_EXCEPTION_ERROR),
+                    ErrorMessage.getErrorValue(ErrorKinds.DUPLICATE_EXCEPTION_ERROR));
+            return update(employee);
+        }
+
+        return "redirect:/employees";
+    }
     // 従業員削除処理
     @PostMapping(value = "/{code}/delete")
     public String delete(@PathVariable String code, @AuthenticationPrincipal UserDetail userDetail, Model model) {

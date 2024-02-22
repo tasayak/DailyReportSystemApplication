@@ -19,23 +19,23 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-body">
+                        <label class="form-label">パスワードは変更する場合のみ入力してください</label>
                             <form th:action="@{/employees/{employee.code}/update}" th:object="${employee}" th:method="post">
+
                                 <div class="wizard wizard-success mb-4">
                                     <div class="mb-3">
                                         <label class="form-label" for="code">社員番号</label>
                                         <p class="mb-1"></p>
-                                        <div class="col-md-7">
-                                            <input class="form-control" type="text" th:field="*{code}" th:errorclass="err" id="code">
+                                            <input class="form-control" type="text" th:field="${employee.code}" th:errorclass="err" id="code">
                                             <span th:errors="*{code}" class="text-danger"></span>
-                                            <span th:if="${codeError} neq null" th:text="${codeError}" class="text-danger"></span>
-                                        </div>
+                                            <span th:if="${codeError} neq null" th:text="${codeError}" class="text-danger"></span>                                        </div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="name">氏名</label>
                                         <p class="mb-1"></p>
-                                        <div class="col-md-7">
-                                            <input class="form-control" type="text" th:field="*{name}" th:errorclass="err" id="name">
+                                            <input class="form-control" type="text" th:field="${employee.name}" th:errorclass="err" id="name">
                                             <span th:errors="*{name}" class="text-danger"></span>
+                                            <span th:if="${nameError} neq null" th:text="${nameError}" class="text-danger"></span>
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -50,14 +50,14 @@
                                         <label class="form-label" for="role">権限</label>
                                         <p class="mb-1"></p>
                                         <div class="col-md-4">
-                                            <select class="form-select" th:field="*{role}" id="role">
+                                            <select class="form-select" th:field="${employee.role}" id="role">
                                                 <option th:each="item:${T(com.techacademy.entity.Employee.Role).values()}" th:value="${item}" th:text="${item.getValue()}" th:selected="*{role} == ${item}">
                                             </select>
                                         </div>
                                     </div>
                                 </div>
                                 <p class="mt-5">
-                                    <input type="submit" value="登録" class="btn btn-primary">
+                                    <input type="submit" value="更新" class="btn btn-primary">
                                     <a th:href="@{/employees}" class="btn btn-primary">戻る</a>
                                 </p>
                             </form>

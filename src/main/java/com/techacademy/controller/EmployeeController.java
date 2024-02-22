@@ -98,13 +98,13 @@ public class EmployeeController {
         return "redirect:/employees";
     }
     // 従業員更新画面
-    @GetMapping(value = "/update")
-    public String update(@ModelAttribute Employee employee) {
+    @GetMapping(value = "/{code}/update")
+    public String edit(@ModelAttribute Employee employee) {
 
         return "employees/update";
     }
     // 従業員更新処理
-    @PostMapping(value = "/update")
+    @PostMapping(value = "/{code}/update")
     public String update(@Validated Employee employee, BindingResult res, Model model) {
 
         // パスワード空白チェック
@@ -114,16 +114,15 @@ public class EmployeeController {
          */
         if ("".equals(employee.getPassword())) {
             // パスワードが空白だった場合
-            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.BLANK_ERROR),
-                    ErrorMessage.getErrorValue(ErrorKinds.BLANK_ERROR));
+            model.addAttribute(ErrorMessage.getErrorValue(ErrorKinds.BLANK_ERROR));
 
-            return update(employee);
+            return edit(employee);
 
         }
 
         // 入力チェック
         if (res.hasErrors()) {
-            return update(employee);
+            return edit(employee);
         }
 
         // 論理削除を行った従業員番号を指定すると例外となるためtry~catchで対応
@@ -132,14 +131,13 @@ public class EmployeeController {
             ErrorKinds result = employeeService.save(employee);
 
             if (ErrorMessage.contains(result)) {
-                model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
-                return update(employee);
+                model.addAttribute(ErrorMessage.getErrorValue(result));
+                return edit(employee);
             }
 
         } catch (DataIntegrityViolationException e) {
-            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DUPLICATE_EXCEPTION_ERROR),
-                    ErrorMessage.getErrorValue(ErrorKinds.DUPLICATE_EXCEPTION_ERROR));
-            return update(employee);
+            model.addAttribute(ErrorMessage.getErrorValue(ErrorKinds.DUPLICATE_EXCEPTION_ERROR));
+            return edit(employee);
         }
 
         return "redirect:/employees";

@@ -118,5 +118,4 @@ public class EmployeeService {
         int passwordLength = employee.getPassword().length();
         return passwordLength < 8 || 16 < passwordLength;
     }
-
 }

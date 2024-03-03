@@ -11,7 +11,7 @@
         <div class="mt-3 h-100 col-sm-10">
             <!-- コンテンツ -->
             <div class="container-fluid p-0">
-                <h1 class="h3 mb-3">従業員 一覧</h1>
+                <h1 class="h3 mb-3">日報 一覧</h1>
 
                 <div class="row">
                     <div class="col-xl-11">
@@ -20,16 +20,18 @@
                                 <table class="table table-striped w-100">
                                     <thead>
                                         <tr>
-                                            <th>社員番号</th>
                                             <th>氏名</th>
+                                            <th>日付</th>
+                                            <th>タイトル</th>
                                             <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr th:each="employee:${employeeList}">
-                                            <td class="align-middle" th:text="${employee.code}"></td>
-                                            <td class="align-middle" th:text="${employee.name}"></td>
-                                            <td class="align-middle"><a th:href="@{/reports/{code}/(code=${employee.code})}" class="btn btn-primary">詳細</a></td>
+                                        <tr th:each="report:${reportList}">
+                                            <td class="align-middle" th:text="名前"></td>
+                                            <td class="align-middle" th:text="${report.reportDate}"></td>
+                                            <td class="align-middle" th:text="${report.title}"></td>
+                                            <td class="align-middle"><a th:href="@{/reports/{id}/(id=${report.id})}" class="btn btn-primary">詳細</a></td>
                                         </tr>
                                     </tbody>
                                 </table>

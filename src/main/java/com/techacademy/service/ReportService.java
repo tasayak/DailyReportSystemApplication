@@ -25,25 +25,29 @@ public class ReportService {
     public ReportService(ReportRepository reportRepository) {
         this.reportRepository = reportRepository;
     }
-    /* 日報保存
+    // 日報保存
     @Transactional
     public ErrorKinds save(Report report) {
 
-        // ログイン中の従業員が入力した日付で登録しようとした場合のチェック
+        /*  (やりたいこと)従ログイン中の従業員が入力した日付で登録しようとした場合のチェック
         if (findByCode(employee.getCode()) && getDate() != null) {
             return ErrorKinds.DATECHECK_ERROR;
         }
-
+        /*  (EmployeeServiceからの参考)従従業員番号重複チェック
+        if (findByCode(employee.getCode()) != null) {
+            return ErrorKinds.DUPLICATE_ERROR;
+        }
         report.setDeleteFlg(false);
 
         LocalDateTime now = LocalDateTime.now();
         report.setCreatedAt(now);
         report.setUpdatedAt(now);
 
-        reportRepository.save(report);
+        reportRepository.save(report);*/
         return ErrorKinds.SUCCESS;
     }
-    /* 従業員削除処理ログイン中の従業員を削除しようとした場合エラー。
+
+    /* (EmployeeControllerからの参考)従業員削除処理ログイン中の従業員を削除しようとした場合エラー。
     @PostMapping(value = "/{code}/delete")
     public String delete(@PathVariable String code, @AuthenticationPrincipal UserDetail userDetail, Model model) {
 

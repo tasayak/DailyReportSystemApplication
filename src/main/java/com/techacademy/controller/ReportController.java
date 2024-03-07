@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.techacademy.constants.ErrorKinds;
 import com.techacademy.constants.ErrorMessage;
-
+import com.techacademy.entity.Employee;
 import com.techacademy.entity.Report;
 import com.techacademy.service.ReportService;
 import com.techacademy.service.UserDetail;
@@ -25,6 +25,7 @@ import com.techacademy.service.UserDetail;
 public class ReportController {
 
     private final ReportService reportService;
+    private Employee employee;
 
     @Autowired
     public ReportController(ReportService reportService) {
@@ -54,23 +55,23 @@ public class ReportController {
 
         // 入力チェック
         if (res.hasErrors()) {
-            return create(report,userDetail,model);
+            return create(null, userDetail, model);
         }
 
         // 論理削除を行った従業員番号を指定すると例外となるためtry~catchで対応
         // (findByIdでは削除フラグがTRUEのデータが取得出来ないため)
         try {
-            ErrorKinds result = reportService.save(report);
+            ErrorKinds result = reportService.save(report,userDetail);
 
             if (ErrorMessage.contains(result)) {
                 model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
-                return create(report,userDetail,model);
+                return create(null, userDetail, model);
             }
 
         } catch (DataIntegrityViolationException e) {
-            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DUPLICATE_EXCEPTION_ERROR),
-                    ErrorMessage.getErrorValue(ErrorKinds.DUPLICATE_EXCEPTION_ERROR));
-            return create(report,userDetail,model);
+            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DATECHECK_ERROR),
+                    ErrorMessage.getErrorValue(ErrorKinds.DATECHECK_ERROR));
+            return create(null, userDetail, model);
         }
 
         return "redirect:/reports";

@@ -27,11 +27,10 @@ import lombok.Data;
 public class Report {
 
     @Id
-    @Column(length = 10)
-    @NotEmpty
-    @Length(max = 10)
+    @Column(nullable = false)
+    //@NotEmpty
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
     // 日付
     @NotNull

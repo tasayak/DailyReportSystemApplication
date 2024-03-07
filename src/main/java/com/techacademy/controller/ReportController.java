@@ -82,6 +82,40 @@ public class ReportController {
 
         return "redirect:/reports";
     }
+    // 日報更新画面
+    @GetMapping(value = "/{id}/update")
+    public String edit(@ModelAttribute Report report, @AuthenticationPrincipal UserDetail userDetail, Model model) {
+        model.addAttribute("employeeName",userDetail.getEmployee().getName());
+           return "reports/update";
+       }
+    // 日報更新処理
+    @PostMapping(value = "/{id}/update")
+    public String update(@Validated Report report, BindingResult res, Model model, @AuthenticationPrincipal UserDetail userDetail) {
+
+            // 入力チェック
+            if (res.hasErrors()) {
+                return edit(null, userDetail, model);
+            }
+
+            // 論理削除を行った従業員番号を指定すると例外となるためtry~catchで対応
+            // (findByIdでは削除フラグがTRUEのデータが取得出来ないため)
+            try {
+                ErrorKinds result = reportService.save(report,userDetail);
+
+                if (ErrorMessage.contains(result)) {
+                    model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+                    return edit(null, userDetail, model);
+                }
+
+            } catch (DataIntegrityViolationException e) {
+                model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DATECHECK_ERROR),
+                        ErrorMessage.getErrorValue(ErrorKinds.DATECHECK_ERROR));
+                return edit(null, userDetail, model);
+            }
+
+        return "redirect:/reports";
+    }
+
 // 日報削除処理
 @PostMapping(value = "/{id}/delete")
 public String delete(@PathVariable int id, Model model) {

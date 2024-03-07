@@ -50,6 +50,26 @@ public class ReportService {
         reportRepository.save(report);
         return ErrorKinds.SUCCESS;
     }
+    // 従業員更新
+    @Transactional
+    public ErrorKinds renew(Report report, @AuthenticationPrincipal UserDetail userDetail) {
+        report.setEmployee(userDetail.getEmployee());
+
+        //日報テーブルに、「ログイン中の従業員 かつ 入力した日付」の日報データが存在する場合はエラー
+        if (reportRepository.existsByEmployeeAndReportDate(userDetail.getEmployee(), report.getReportDate())){
+
+            return ErrorKinds.DATECHECK_ERROR;
+        }
+
+        report.setDeleteFlg(false);
+
+        LocalDateTime now = LocalDateTime.now();
+        report.setCreatedAt(now);
+        report.setUpdatedAt(now);
+
+        reportRepository.save(report);
+        return ErrorKinds.SUCCESS;
+    }
     // 日報削除
     @Transactional
     public ErrorKinds delete(int id) {

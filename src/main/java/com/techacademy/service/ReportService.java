@@ -50,6 +50,17 @@ public class ReportService {
         reportRepository.save(report);
         return ErrorKinds.SUCCESS;
     }
+    // 日報削除
+    @Transactional
+    public ErrorKinds delete(int id) {
+
+        Report report = findById(id);
+        LocalDateTime now = LocalDateTime.now();
+        report.setUpdatedAt(now);
+        report.setDeleteFlg(true);
+
+        return ErrorKinds.SUCCESS;
+    }
 
     // 日報一覧表示処理
     public List<Report> findAll(Employee employee) {
@@ -62,7 +73,7 @@ public class ReportService {
     }
 
     // 1件を検索
-    public Report findByCode(String id) {
+    public Report findById(int id) {
         // findByIdで検索
         Optional<Report> option = reportRepository.findById(id);
         // 取得できなかった場合はnullを返す

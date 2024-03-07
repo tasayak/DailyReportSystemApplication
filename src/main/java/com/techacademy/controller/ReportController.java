@@ -41,7 +41,13 @@ public class ReportController {
 
         return "reports/list";
     }
+    // 日報詳細画面
+    @GetMapping(value = "/{id}/")
+    public String detail(@PathVariable int id, Model model) {
 
+        model.addAttribute("report", reportService.findById(id));
+        return "reports/detail";
+    }
     // 日報新規登録画面
     @GetMapping(value = "/add")
     public String create(@ModelAttribute Report report, @AuthenticationPrincipal UserDetail userDetail, Model model) {
@@ -76,4 +82,19 @@ public class ReportController {
 
         return "redirect:/reports";
     }
+// 日報削除処理
+@PostMapping(value = "/{id}/delete")
+public String delete(@PathVariable int id, Model model) {
+
+    ErrorKinds result = reportService.delete(id);
+
+    if (ErrorMessage.contains(result)) {
+        model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+        model.addAttribute("report", reportService.findById(id));
+        return detail(id, model);
+    }
+
+    return "redirect:/reports";
+}
+
 }

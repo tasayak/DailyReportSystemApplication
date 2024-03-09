@@ -25,7 +25,6 @@ import com.techacademy.service.UserDetail;
 public class ReportController {
 
     private final ReportService reportService;
-    private Employee employee;
 
     @Autowired
     public ReportController(ReportService reportService) {
@@ -36,8 +35,8 @@ public class ReportController {
     @GetMapping
     public String list(Model model ,@AuthenticationPrincipal UserDetail userDetail) {
 
-        model.addAttribute("listSize", reportService.findAll(userDetail.getEmployee()).size());
-        model.addAttribute("reportList", reportService.findAll(userDetail.getEmployee()));
+        model.addAttribute("listSize", reportService.findByEmployee(userDetail.getEmployee()).size());
+        model.addAttribute("reportList", reportService.findByEmployee(userDetail.getEmployee()));
 
         return "reports/list";
     }
@@ -118,15 +117,15 @@ public class ReportController {
     }
 
 // 日報削除処理
-@PostMapping(value = "/{id}/delete")
-public String delete(@PathVariable int id, Model model) {
+    @PostMapping(value = "/{id}/delete")
+    public String delete(@PathVariable int id, Model model, Employee employee) {
 
     ErrorKinds result = reportService.delete(id);
 
-    if (ErrorMessage.contains(result)) {
-        model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
-        model.addAttribute("report", reportService.findById(id));
-        return detail(id, model);
+        if (ErrorMessage.contains(result)) {
+            model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+            model.addAttribute("report", reportService.findById(id));
+            return detail(id, model);
     }
 
     return "redirect:/reports";

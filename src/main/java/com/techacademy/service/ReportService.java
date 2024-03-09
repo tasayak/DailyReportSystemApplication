@@ -1,15 +1,11 @@
 package com.techacademy.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.techacademy.constants.ErrorKinds;
@@ -17,9 +13,6 @@ import com.techacademy.entity.Employee;
 import com.techacademy.entity.Report;
 import com.techacademy.repository.ReportRepository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Service
 public class ReportService {
@@ -50,6 +43,7 @@ public class ReportService {
         reportRepository.save(report);
         return ErrorKinds.SUCCESS;
     }
+
     // 日報更新
     @Transactional
     public ErrorKinds renew(Report report, @AuthenticationPrincipal UserDetail userDetail) {
@@ -70,6 +64,7 @@ public class ReportService {
         reportRepository.save(report);
         return ErrorKinds.SUCCESS;
     }
+
     // 日報削除
     @Transactional
     public ErrorKinds delete(int id) {
@@ -83,7 +78,7 @@ public class ReportService {
     }
 
     // 日報一覧表示処理
-    public List<Report> findAll(Employee employee) {
+    public List<Report> findByEmployee(Employee employee) {
         if (employee.getRole() == Employee.Role.ADMIN) {
         return reportRepository.findAll();
 
@@ -100,6 +95,7 @@ public class ReportService {
         Report report = option.orElse(null);
         return report;
     }
+
 }
 
 
